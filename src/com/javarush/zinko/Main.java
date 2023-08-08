@@ -1,7 +1,11 @@
 package com.javarush.zinko;
 
+import com.javarush.zinko.Ui.Dialogue;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        new Dialogue().start();
+
+
     }
 }
