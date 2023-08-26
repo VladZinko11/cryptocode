@@ -1,7 +1,6 @@
 package com.javarush.zinko.cryptography;
 
-import static com.javarush.zinko.source.Alphabet.ALPHABET;
-import static com.javarush.zinko.source.Alphabet.statistics;
+import static com.javarush.zinko.source.Alphabet.*;
 
 public class Crypto {
     public static String encode(String input, int key) {
@@ -14,7 +13,7 @@ public class Crypto {
                     index = j;
                 }
             }
-            result = result + ALPHABET[index + (key % ALPHABET.length)];
+            result = result + ALPHABET[(index + key) % ALPHABET.length];
         }
         return result;
     }
@@ -29,52 +28,55 @@ public class Crypto {
                     index = j;
                 }
             }
-            result = result + ALPHABET[(index - (key % ALPHABET.length)) < 0 ? ALPHABET.length + index - (key % ALPHABET.length) : index - (key % ALPHABET.length)];
+            result = result + ALPHABET[(ALPHABET.length + index - key) % ALPHABET.length];
         }
         return result;
     }
 
     public static String bruteForce(String input) {
-        double epsilon = 1;
         String result = "";
         String resultDecode = "";
+        double exp = 1;
         int key;
         char[] inputChar = input.toLowerCase().toCharArray();
         int index = 0;
-        int countO = 0;
-        int countE = 0;
-        int countA = 0;
-        int countI = 0;
         for (int k = 0; k < ALPHABET.length; k++) {
             key = k;
-            countO = 0;
-            countA = 0;
-            countI = 0;
-            countE = 0;
+            double countO = 0;
+            double countA = 0;
+            double countE = 0;
+            double countI = 0;
+            double countN = 0;
+            double countT = 0;
+            double countSpace = 0;
+            resultDecode = "";
+
             for (int i = 0; i < inputChar.length; i++) {
                 for (int j = 0; j < ALPHABET.length; j++) {
                     if (inputChar[i] == ALPHABET[j]) {
                         index = j;
                     }
                 }
-                char letter = ALPHABET[(index - (key % ALPHABET.length)) < 0 ? ALPHABET.length + index - (key % ALPHABET.length) : index - (key % ALPHABET.length)];
-                if (letter == 'о')
-                    countO++;
-                if (letter == 'е')
-                    countE++;
-                if (letter == 'а')
-                    countA++;
-                if (letter == 'и')
-                    countI++;
-
+                char letter = ALPHABET[(ALPHABET.length + index - key) % ALPHABET.length];
+                if (letter == 'о') countO++;
+                if (letter == 'а') countA++;
+                if (letter == 'е') countE++;
+                if (letter == 'и') countI++;
+                if (letter == 'н') countN++;
+                if (letter == 'т') countT++;
+                if (letter == ' ') countSpace++;
                 resultDecode = resultDecode + letter;
             }
-            double epsilon1 = Math.abs((countO / ALPHABET.length) - statistics.get('о')) + Math.abs((countA / ALPHABET.length) - statistics.get('а'))
-                    + Math.abs((countE / ALPHABET.length) - statistics.get('е')) + Math.abs((countI / ALPHABET.length) - statistics.get('и'));
-            if (epsilon1 < epsilon) {
-                epsilon = epsilon1;
-                result = resultDecode;
+            double exp1 = Math.abs(countO / inputChar.length - statisticsO) + Math.abs(countA / inputChar.length - statisticsA) +
+                    Math.abs(countE / inputChar.length - statisticsE) + Math.abs(countI / inputChar.length - statisticsI) +
+                    Math.abs(countN / inputChar.length - statisticsN) + Math.abs(countT / inputChar.length - statisticsT) +
+                    Math.abs(countSpace/inputChar.length - statisticsSpase);
+            if(exp1 < exp)
+            {
+                exp=exp1;
+                result=resultDecode;
             }
+
         }
         return result;
     }
